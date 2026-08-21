@@ -10,33 +10,141 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ClientesRouteImport } from './routes/clientes'
+import { Route as ComprasRouteImport } from './routes/compras'
+import { Route as NominaRouteImport } from './routes/nomina'
+import { Route as ProductosRouteImport } from './routes/productos'
+import { Route as ProveedoresRouteImport } from './routes/proveedores'
+import { Route as ReportesRouteImport } from './routes/reportes'
+import { Route as SoporteRouteImport } from './routes/soporte'
+import { Route as VentasRouteImport } from './routes/ventas'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClientesRoute = ClientesRouteImport.update({
+  id: '/clientes',
+  path: '/clientes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComprasRoute = ComprasRouteImport.update({
+  id: '/compras',
+  path: '/compras',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NominaRoute = NominaRouteImport.update({
+  id: '/nomina',
+  path: '/nomina',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductosRoute = ProductosRouteImport.update({
+  id: '/productos',
+  path: '/productos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProveedoresRoute = ProveedoresRouteImport.update({
+  id: '/proveedores',
+  path: '/proveedores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportesRoute = ReportesRouteImport.update({
+  id: '/reportes',
+  path: '/reportes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SoporteRoute = SoporteRouteImport.update({
+  id: '/soporte',
+  path: '/soporte',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VentasRoute = VentasRouteImport.update({
+  id: '/ventas',
+  path: '/ventas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/clientes': typeof ClientesRoute
+  '/compras': typeof ComprasRoute
+  '/nomina': typeof NominaRoute
+  '/productos': typeof ProductosRoute
+  '/proveedores': typeof ProveedoresRoute
+  '/reportes': typeof ReportesRoute
+  '/soporte': typeof SoporteRoute
+  '/ventas': typeof VentasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/clientes': typeof ClientesRoute
+  '/compras': typeof ComprasRoute
+  '/nomina': typeof NominaRoute
+  '/productos': typeof ProductosRoute
+  '/proveedores': typeof ProveedoresRoute
+  '/reportes': typeof ReportesRoute
+  '/soporte': typeof SoporteRoute
+  '/ventas': typeof VentasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/clientes': typeof ClientesRoute
+  '/compras': typeof ComprasRoute
+  '/nomina': typeof NominaRoute
+  '/productos': typeof ProductosRoute
+  '/proveedores': typeof ProveedoresRoute
+  '/reportes': typeof ReportesRoute
+  '/soporte': typeof SoporteRoute
+  '/ventas': typeof VentasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/clientes'
+    | '/compras'
+    | '/nomina'
+    | '/productos'
+    | '/proveedores'
+    | '/reportes'
+    | '/soporte'
+    | '/ventas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/clientes'
+    | '/compras'
+    | '/nomina'
+    | '/productos'
+    | '/proveedores'
+    | '/reportes'
+    | '/soporte'
+    | '/ventas'
+  id:
+    | '__root__'
+    | '/'
+    | '/clientes'
+    | '/compras'
+    | '/nomina'
+    | '/productos'
+    | '/proveedores'
+    | '/reportes'
+    | '/soporte'
+    | '/ventas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ClientesRoute: typeof ClientesRoute
+  ComprasRoute: typeof ComprasRoute
+  NominaRoute: typeof NominaRoute
+  ProductosRoute: typeof ProductosRoute
+  ProveedoresRoute: typeof ProveedoresRoute
+  ReportesRoute: typeof ReportesRoute
+  SoporteRoute: typeof SoporteRoute
+  VentasRoute: typeof VentasRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +156,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/clientes': {
+      id: '/clientes'
+      path: '/clientes'
+      fullPath: '/clientes'
+      preLoaderRoute: typeof ClientesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compras': {
+      id: '/compras'
+      path: '/compras'
+      fullPath: '/compras'
+      preLoaderRoute: typeof ComprasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nomina': {
+      id: '/nomina'
+      path: '/nomina'
+      fullPath: '/nomina'
+      preLoaderRoute: typeof NominaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/productos': {
+      id: '/productos'
+      path: '/productos'
+      fullPath: '/productos'
+      preLoaderRoute: typeof ProductosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proveedores': {
+      id: '/proveedores'
+      path: '/proveedores'
+      fullPath: '/proveedores'
+      preLoaderRoute: typeof ProveedoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reportes': {
+      id: '/reportes'
+      path: '/reportes'
+      fullPath: '/reportes'
+      preLoaderRoute: typeof ReportesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/soporte': {
+      id: '/soporte'
+      path: '/soporte'
+      fullPath: '/soporte'
+      preLoaderRoute: typeof SoporteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ventas': {
+      id: '/ventas'
+      path: '/ventas'
+      fullPath: '/ventas'
+      preLoaderRoute: typeof VentasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ClientesRoute: ClientesRoute,
+  ComprasRoute: ComprasRoute,
+  NominaRoute: NominaRoute,
+  ProductosRoute: ProductosRoute,
+  ProveedoresRoute: ProveedoresRoute,
+  ReportesRoute: ReportesRoute,
+  SoporteRoute: SoporteRoute,
+  VentasRoute: VentasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
