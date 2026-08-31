@@ -1,21 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { DollarSign, ShoppingCart, Users, Package } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { DollarSign, AlertTriangle, CreditCard, Package } from "lucide-react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { StatCard, Panel, DataTable, Pill, BarChart } from "@/components/module-ui";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Datronix — Panel principal de gestión" },
+      { title: "Datronix — Panel principal del back-office" },
       {
         name: "description",
         content:
-          "Panel principal Datronix: ventas, inventario, clientes y reportes en un solo lugar.",
+          "Panel principal Datronix: ventas del día, stock crítico, créditos pendientes e inventario total.",
       },
       { property: "og:title", content: "Datronix — Panel principal" },
       {
         property: "og:description",
-        content: "Control de ventas, inventario y reportes en tiempo real.",
+        content: "Ventas del día, stock crítico y cartera en tiempo real.",
       },
     ],
   }),
@@ -24,76 +24,78 @@ export const Route = createFileRoute("/")({
 
 function Principal() {
   return (
-    <DashboardLayout breadcrumb="Administrador/Control/Reportes de ventas">
+    <DashboardLayout breadcrumb="Administrador/Control/Panel principal">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="Ventas del día"
+          label="Ventas de hoy"
           value="$4.820.000"
-          hint="+12% vs ayer"
+          hint="14 ventas registradas"
           icon={<DollarSign className="size-4" />}
         />
         <StatCard
-          label="Órdenes"
-          value="132"
-          hint="18 pendientes"
-          icon={<ShoppingCart className="size-4" />}
+          label="Productos con stock bajo"
+          value="9"
+          hint="Por debajo del mínimo"
+          icon={<AlertTriangle className="size-4" />}
         />
         <StatCard
-          label="Clientes activos"
-          value="1.284"
-          hint="+34 este mes"
-          icon={<Users className="size-4" />}
+          label="Clientes con crédito pendiente"
+          value="12"
+          hint="$5.420.000 en cartera"
+          icon={<CreditCard className="size-4" />}
         />
         <StatCard
-          label="Productos"
+          label="Productos en inventario"
           value="562"
-          hint="9 con stock bajo"
+          hint="Valor $210.450.000"
           icon={<Package className="size-4" />}
         />
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
-        <Panel title="Ventas por mes" className="lg:col-span-2">
+        <Panel title="Ventas de los últimos 7 días" className="lg:col-span-2">
           <BarChart
             data={[
-              { label: "Ene", value: 42 },
-              { label: "Feb", value: 55 },
-              { label: "Mar", value: 38 },
-              { label: "Abr", value: 71 },
-              { label: "May", value: 64 },
-              { label: "Jun", value: 88 },
-              { label: "Jul", value: 76 },
-              { label: "Ago", value: 92 },
+              { label: "Lun", value: 42 },
+              { label: "Mar", value: 55 },
+              { label: "Mié", value: 38 },
+              { label: "Jue", value: 71 },
+              { label: "Vie", value: 64 },
+              { label: "Sáb", value: 88 },
+              { label: "Dom", value: 26 },
             ]}
           />
         </Panel>
-        <Panel title="Actividad reciente">
-          <ul className="space-y-3 text-sm">
+        <Panel title="Accesos rápidos">
+          <div className="grid gap-2 text-sm">
             {[
-              "Nueva venta #10245 registrada",
-              "Producto 'Teclado K80' actualizado",
-              "Cliente Andrea Ruiz creado",
-              "Compra a Proveedor Delta aprobada",
-              "Nómina de agosto en revisión",
-            ].map((t) => (
-              <li key={t} className="flex gap-3">
-                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-primary" />
-                <span className="text-muted-foreground">{t}</span>
-              </li>
+              { to: "/ventas", label: "Registrar nueva venta" } as const,
+              { to: "/clientes", label: "Agregar cliente" } as const,
+              { to: "/productos", label: "Actualizar inventario" } as const,
+              { to: "/devoluciones", label: "Registrar devolución" } as const,
+              { to: "/reportes", label: "Ver reportes" } as const,
+            ].map((a) => (
+              <Link
+                key={a.to}
+                to={a.to}
+                className="rounded-md border border-border px-3 py-2 hover:bg-muted"
+              >
+                {a.label}
+              </Link>
             ))}
-          </ul>
+          </div>
         </Panel>
       </div>
 
-      <Panel title="Últimas ventas" className="mt-4">
+      <Panel title="Últimas ventas registradas" className="mt-4">
         <DataTable
-          columns={["Factura", "Cliente", "Fecha", "Total", "Estado"]}
+          columns={["ID Venta", "Cliente", "Fecha", "Total", "Estado de pago"]}
           rows={[
-            ["#10245", "Andrea Ruiz", "21/08/2026", "$320.000", <Pill tone="success">Pagada</Pill>],
-            ["#10244", "Comercial JR", "21/08/2026", "$1.150.000", <Pill tone="warning">Pendiente</Pill>],
-            ["#10243", "Luis Ortega", "20/08/2026", "$85.000", <Pill tone="success">Pagada</Pill>],
-            ["#10242", "Distribuciones M", "20/08/2026", "$2.430.000", <Pill>En proceso</Pill>],
-            ["#10241", "Marta Peña", "19/08/2026", "$64.500", <Pill tone="danger">Anulada</Pill>],
+            ["10245", "Andrea Ruiz", "31/08/2026", "$320.000", <Pill tone="success">CONTADO</Pill>],
+            ["10244", "Comercial JR", "31/08/2026", "$1.150.000", <Pill tone="warning">CREDITO</Pill>],
+            ["10243", "Luis Ortega", "30/08/2026", "$85.000", <Pill tone="success">CONTADO</Pill>],
+            ["10242", "Distribuciones M", "30/08/2026", "$2.430.000", <Pill tone="warning">CREDITO</Pill>],
+            ["10241", "Marta Peña", "29/08/2026", "$64.500", <Pill tone="success">CONTADO</Pill>],
           ]}
         />
       </Panel>

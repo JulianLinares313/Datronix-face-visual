@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClientesRouteImport } from './routes/clientes'
-import { Route as ComprasRouteImport } from './routes/compras'
 import { Route as NominaRouteImport } from './routes/nomina'
 import { Route as ProductosRouteImport } from './routes/productos'
 import { Route as ProveedoresRouteImport } from './routes/proveedores'
@@ -27,11 +26,6 @@ const IndexRoute = IndexRouteImport.update({
 const ClientesRoute = ClientesRouteImport.update({
   id: '/clientes',
   path: '/clientes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ComprasRoute = ComprasRouteImport.update({
-  id: '/compras',
-  path: '/compras',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NominaRoute = NominaRouteImport.update({
@@ -68,7 +62,6 @@ const VentasRoute = VentasRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
-  '/compras': typeof ComprasRoute
   '/nomina': typeof NominaRoute
   '/productos': typeof ProductosRoute
   '/proveedores': typeof ProveedoresRoute
@@ -79,7 +72,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
-  '/compras': typeof ComprasRoute
   '/nomina': typeof NominaRoute
   '/productos': typeof ProductosRoute
   '/proveedores': typeof ProveedoresRoute
@@ -91,7 +83,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
-  '/compras': typeof ComprasRoute
   '/nomina': typeof NominaRoute
   '/productos': typeof ProductosRoute
   '/proveedores': typeof ProveedoresRoute
@@ -104,7 +95,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/clientes'
-    | '/compras'
     | '/nomina'
     | '/productos'
     | '/proveedores'
@@ -115,7 +105,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/clientes'
-    | '/compras'
     | '/nomina'
     | '/productos'
     | '/proveedores'
@@ -126,7 +115,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/clientes'
-    | '/compras'
     | '/nomina'
     | '/productos'
     | '/proveedores'
@@ -138,7 +126,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ClientesRoute: typeof ClientesRoute
-  ComprasRoute: typeof ComprasRoute
   NominaRoute: typeof NominaRoute
   ProductosRoute: typeof ProductosRoute
   ProveedoresRoute: typeof ProveedoresRoute
@@ -161,13 +148,6 @@ declare module '@tanstack/react-router' {
       path: '/clientes'
       fullPath: '/clientes'
       preLoaderRoute: typeof ClientesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/compras': {
-      id: '/compras'
-      path: '/compras'
-      fullPath: '/compras'
-      preLoaderRoute: typeof ComprasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/nomina': {
@@ -218,7 +198,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ClientesRoute: ClientesRoute,
-  ComprasRoute: ComprasRoute,
   NominaRoute: NominaRoute,
   ProductosRoute: ProductosRoute,
   ProveedoresRoute: ProveedoresRoute,
