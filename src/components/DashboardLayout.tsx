@@ -7,7 +7,8 @@ import {
   Truck,
   BarChart3,
   Users,
-  ShoppingCart,
+  History,
+  Undo2,
   Wallet,
   Headphones,
   LogOut,
@@ -16,18 +17,21 @@ import {
   Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AsistenteIA } from "@/components/AsistenteIA";
 
 const nav = [
   { to: "/", label: "Principal", icon: Home },
-  { to: "/ventas", label: "Ventas", icon: Tag },
+  { to: "/ventas", label: "Nueva venta", icon: Tag },
+  { to: "/historial", label: "Historial y remisiones", icon: History },
+  { to: "/clientes", label: "Clientes", icon: Users },
   { to: "/productos", label: "Productos", icon: Package },
   { to: "/proveedores", label: "Proveedores", icon: Truck },
+  { to: "/devoluciones", label: "Devoluciones", icon: Undo2 },
   { to: "/reportes", label: "Reportes", icon: BarChart3 },
-  { to: "/clientes", label: "Clientes", icon: Users },
-  { to: "/compras", label: "Compras", icon: ShoppingCart },
-  { to: "/nomina", label: "Nomina", icon: Wallet },
+  { to: "/nomina", label: "Nómina", icon: Wallet },
   { to: "/soporte", label: "Soporte", icon: Headphones },
 ] as const;
+
 
 function todayEs() {
   return new Date().toLocaleDateString("es-CO", {
