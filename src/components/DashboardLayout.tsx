@@ -145,6 +145,9 @@ export function DashboardLayout({
 
         <main className="p-4 md:p-6">{children}</main>
       </div>
+
+      <AsistenteIA />
     </div>
+
   );
 }
