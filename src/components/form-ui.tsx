@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-export type Field = {
+export type FieldDef = {
   name: string;
   label: string;
   type?: "text" | "number" | "email" | "date" | "textarea" | "select";
@@ -30,7 +30,7 @@ export function SearchBar({ placeholder }: { placeholder: string }) {
   );
 }
 
-export function Field({ field }: { field: Field }) {
+export function FieldInput({ field }: { field: FieldDef }) {
   const base =
     "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/40";
   return (
@@ -70,7 +70,7 @@ export function FormDialog({
   columns = 2,
 }: {
   title: string;
-  fields: Field[];
+  fields: FieldDef[];
   trigger: ReactNode;
   submitLabel?: string;
   columns?: 1 | 2;
@@ -90,7 +90,7 @@ export function FormDialog({
           )}
         >
           {fields.map((f) => (
-            <Field key={f.name} field={f} />
+            <FieldInput key={f.name} field={f} />
           ))}
         </div>
         <DialogFooter>
@@ -148,7 +148,7 @@ export function CrudHeader({
   title: string;
   searchPlaceholder: string;
   addLabel: string;
-  fields: Field[];
+  fields: FieldDef[];
 }) {
   return (
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
