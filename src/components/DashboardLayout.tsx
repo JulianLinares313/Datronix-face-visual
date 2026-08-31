@@ -91,11 +91,15 @@ export function DashboardLayout({
         </nav>
 
         <div className="border-t border-sidebar-border p-4">
-          <button className="flex w-full items-center justify-center gap-2 rounded-md bg-sidebar-accent/50 px-4 py-2 text-sm transition-colors hover:bg-sidebar-accent">
+          <Link
+            to="/login"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-sidebar-accent/50 px-4 py-2 text-sm transition-colors hover:bg-sidebar-accent"
+          >
             <LogOut className="size-4" />
             Salir
-          </button>
+          </Link>
         </div>
+
       </aside>
 
       {open && (
