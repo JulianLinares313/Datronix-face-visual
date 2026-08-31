@@ -7,7 +7,8 @@ import {
   Truck,
   BarChart3,
   Users,
-  ShoppingCart,
+  History,
+  Undo2,
   Wallet,
   Headphones,
   LogOut,
@@ -16,18 +17,21 @@ import {
   Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AsistenteIA } from "@/components/AsistenteIA";
 
 const nav = [
   { to: "/", label: "Principal", icon: Home },
-  { to: "/ventas", label: "Ventas", icon: Tag },
+  { to: "/ventas", label: "Nueva venta", icon: Tag },
+  { to: "/historial", label: "Historial y remisiones", icon: History },
+  { to: "/clientes", label: "Clientes", icon: Users },
   { to: "/productos", label: "Productos", icon: Package },
   { to: "/proveedores", label: "Proveedores", icon: Truck },
+  { to: "/devoluciones", label: "Devoluciones", icon: Undo2 },
   { to: "/reportes", label: "Reportes", icon: BarChart3 },
-  { to: "/clientes", label: "Clientes", icon: Users },
-  { to: "/compras", label: "Compras", icon: ShoppingCart },
-  { to: "/nomina", label: "Nomina", icon: Wallet },
+  { to: "/nomina", label: "Nómina", icon: Wallet },
   { to: "/soporte", label: "Soporte", icon: Headphones },
 ] as const;
+
 
 function todayEs() {
   return new Date().toLocaleDateString("es-CO", {
@@ -87,11 +91,15 @@ export function DashboardLayout({
         </nav>
 
         <div className="border-t border-sidebar-border p-4">
-          <button className="flex w-full items-center justify-center gap-2 rounded-md bg-sidebar-accent/50 px-4 py-2 text-sm transition-colors hover:bg-sidebar-accent">
+          <Link
+            to="/login"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-sidebar-accent/50 px-4 py-2 text-sm transition-colors hover:bg-sidebar-accent"
+          >
             <LogOut className="size-4" />
             Salir
-          </button>
+          </Link>
         </div>
+
       </aside>
 
       {open && (
@@ -137,6 +145,9 @@ export function DashboardLayout({
 
         <main className="p-4 md:p-6">{children}</main>
       </div>
+
+      <AsistenteIA />
     </div>
+
   );
 }
