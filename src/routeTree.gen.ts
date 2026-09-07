@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClientesRouteImport } from './routes/clientes'
+import { Route as ComprasRouteImport } from './routes/compras'
 import { Route as DevolucionesRouteImport } from './routes/devoluciones'
 import { Route as HistorialRouteImport } from './routes/historial'
 import { Route as LoginRouteImport } from './routes/login'
@@ -29,6 +30,11 @@ const IndexRoute = IndexRouteImport.update({
 const ClientesRoute = ClientesRouteImport.update({
   id: '/clientes',
   path: '/clientes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComprasRoute = ComprasRouteImport.update({
+  id: '/compras',
+  path: '/compras',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DevolucionesRoute = DevolucionesRouteImport.update({
@@ -80,6 +86,7 @@ const VentasRoute = VentasRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
+  '/compras': typeof ComprasRoute
   '/devoluciones': typeof DevolucionesRoute
   '/historial': typeof HistorialRoute
   '/login': typeof LoginRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
+  '/compras': typeof ComprasRoute
   '/devoluciones': typeof DevolucionesRoute
   '/historial': typeof HistorialRoute
   '/login': typeof LoginRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
+  '/compras': typeof ComprasRoute
   '/devoluciones': typeof DevolucionesRoute
   '/historial': typeof HistorialRoute
   '/login': typeof LoginRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/clientes'
+    | '/compras'
     | '/devoluciones'
     | '/historial'
     | '/login'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/clientes'
+    | '/compras'
     | '/devoluciones'
     | '/historial'
     | '/login'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/clientes'
+    | '/compras'
     | '/devoluciones'
     | '/historial'
     | '/login'
@@ -162,6 +174,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ClientesRoute: typeof ClientesRoute
+  ComprasRoute: typeof ComprasRoute
   DevolucionesRoute: typeof DevolucionesRoute
   HistorialRoute: typeof HistorialRoute
   LoginRoute: typeof LoginRoute
@@ -187,6 +200,13 @@ declare module '@tanstack/react-router' {
       path: '/clientes'
       fullPath: '/clientes'
       preLoaderRoute: typeof ClientesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compras': {
+      id: '/compras'
+      path: '/compras'
+      fullPath: '/compras'
+      preLoaderRoute: typeof ComprasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/devoluciones': {
@@ -258,6 +278,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ClientesRoute: ClientesRoute,
+  ComprasRoute: ComprasRoute,
   DevolucionesRoute: DevolucionesRoute,
   HistorialRoute: HistorialRoute,
   LoginRoute: LoginRoute,
