@@ -27,6 +27,7 @@ const nav = [
   { to: "/clientes", label: "Clientes", icon: Users },
   { to: "/productos", label: "Productos", icon: Package },
   { to: "/proveedores", label: "Proveedores", icon: Truck },
+  { to: "/compras", label: "Compras", icon: ShoppingCart },
   { to: "/devoluciones", label: "Devoluciones", icon: Undo2 },
   { to: "/reportes", label: "Reportes", icon: BarChart3 },
   { to: "/nomina", label: "Nómina", icon: Wallet },
