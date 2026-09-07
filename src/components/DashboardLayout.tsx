@@ -15,6 +15,7 @@ import {
   Menu,
   Bell,
   Search,
+  ShoppingCart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AsistenteIA } from "@/components/AsistenteIA";
