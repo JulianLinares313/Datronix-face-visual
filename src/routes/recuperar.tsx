@@ -1,26 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Mail, Lock, Sparkles } from "lucide-react";
+import { Mail, ArrowLeft, Sparkles } from "lucide-react";
 
-export const Route = createFileRoute("/login")({
+export const Route = createFileRoute("/recuperar")({
   head: () => ({
     meta: [
-      { title: "Iniciar sesión — Datronix Back-Office" },
+      { title: "Recuperar contraseña — Datronix Back-Office" },
       {
         name: "description",
-        content:
-          "Acceso al sistema Datronix: gestión de ventas, inventario, cartera y remisiones para distribuidoras.",
+        content: "Recupera el acceso a tu cuenta Datronix con tu correo corporativo.",
       },
-      { property: "og:title", content: "Iniciar sesión — Datronix" },
+      { property: "og:title", content: "Recuperar contraseña — Datronix" },
       {
         property: "og:description",
-        content: "Acceso al back-office de ventas e inventario Datronix.",
+        content: "Recupera el acceso a tu cuenta Datronix con tu correo corporativo.",
       },
     ],
   }),
-  component: Login,
+  component: Recuperar,
 });
 
-function Login() {
+function Recuperar() {
   return (
     <main className="grid min-h-screen lg:grid-cols-2">
       <section className="hidden flex-col justify-between bg-gradient-sidebar p-10 text-sidebar-foreground lg:flex">
@@ -44,9 +43,16 @@ function Login() {
 
       <section className="flex items-center justify-center bg-background p-6">
         <div className="w-full max-w-sm rounded-xl border border-border bg-card p-8 shadow-card">
-          <h1 className="text-xl font-semibold">Iniciar sesión</h1>
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+          >
+            <ArrowLeft className="size-3.5" /> Volver a iniciar sesión
+          </Link>
+          <h1 className="mt-4 text-xl font-semibold">Recuperar contraseña</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Ingresa con tu correo corporativo.
+            Ingresa tu correo y te enviaremos instrucciones para restablecer tu
+            contraseña.
           </p>
 
           <form className="mt-6 space-y-4">
@@ -64,42 +70,16 @@ function Login() {
               </div>
             </label>
 
-            <label className="block space-y-1.5">
-              <span className="text-xs font-medium text-muted-foreground">
-                Contraseña
-              </span>
-              <div className="flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2">
-                <Lock className="size-4 text-muted-foreground" />
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  className="w-full bg-transparent text-sm outline-none"
-                />
-              </div>
-            </label>
-
-            <label className="flex items-center gap-2 text-xs text-muted-foreground">
-              <input type="checkbox" className="size-3.5" /> Recordarme
-            </label>
-
-            <div className="grid gap-2">
-              <Link
-                to="/"
-                className="flex w-full items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
-              >
-                Validar acceso
-              </Link>
-              <Link
-                to="/recuperar"
-                className="flex w-full items-center justify-center rounded-md border border-border px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
-              >
-                Recuperar contraseña
-              </Link>
-            </div>
+            <button
+              type="button"
+              className="flex w-full items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+            >
+              Enviar instrucciones
+            </button>
           </form>
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
-            POST /api/usuarios/login
+            POST /api/usuarios/recuperar
           </p>
         </div>
       </section>
