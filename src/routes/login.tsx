@@ -95,6 +95,12 @@ function Login() {
               >
                 Recuperar contraseña
               </Link>
+              <Link
+                to="/verificar"
+                className="flex w-full items-center justify-center rounded-md border border-border px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+              >
+                Verificar acceso por código
+              </Link>
             </div>
           </form>
 
