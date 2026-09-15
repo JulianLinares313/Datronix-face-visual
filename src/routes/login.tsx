@@ -78,21 +78,24 @@ function Login() {
               </div>
             </label>
 
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="size-3.5" /> Recordarme
-              </label>
-              <span className="cursor-pointer hover:text-primary">
-                ¿Olvidaste tu contraseña?
-              </span>
-            </div>
+            <label className="flex items-center gap-2 text-xs text-muted-foreground">
+              <input type="checkbox" className="size-3.5" /> Recordarme
+            </label>
 
-            <Link
-              to="/"
-              className="flex w-full items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
-            >
-              Entrar
-            </Link>
+            <div className="grid gap-2">
+              <Link
+                to="/"
+                className="flex w-full items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+              >
+                Validar acceso
+              </Link>
+              <Link
+                to="/recuperar"
+                className="flex w-full items-center justify-center rounded-md border border-border px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+              >
+                Recuperar contraseña
+              </Link>
+            </div>
           </form>
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
