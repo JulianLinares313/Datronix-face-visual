@@ -16,6 +16,7 @@ import {
   Bell,
   Search,
   ShoppingCart,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AsistenteIA } from "@/components/AsistenteIA";
@@ -31,6 +32,7 @@ const nav = [
   { to: "/devoluciones", label: "Devoluciones", icon: Undo2 },
   { to: "/reportes", label: "Reportes", icon: BarChart3 },
   { to: "/nomina", label: "Nómina", icon: Wallet },
+  { to: "/usuarios", label: "Usuarios y roles", icon: ShieldCheck },
   { to: "/soporte", label: "Soporte", icon: Headphones },
 ] as const;
 
