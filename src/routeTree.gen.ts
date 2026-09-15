@@ -18,6 +18,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as NominaRouteImport } from './routes/nomina'
 import { Route as ProductosRouteImport } from './routes/productos'
 import { Route as ProveedoresRouteImport } from './routes/proveedores'
+import { Route as RecuperarRouteImport } from './routes/recuperar'
 import { Route as ReportesRouteImport } from './routes/reportes'
 import { Route as SoporteRouteImport } from './routes/soporte'
 import { Route as UsuariosRouteImport } from './routes/usuarios'
@@ -68,6 +69,11 @@ const ProveedoresRoute = ProveedoresRouteImport.update({
   path: '/proveedores',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecuperarRoute = RecuperarRouteImport.update({
+  id: '/recuperar',
+  path: '/recuperar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportesRoute = ReportesRouteImport.update({
   id: '/reportes',
   path: '/reportes',
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/nomina': typeof NominaRoute
   '/productos': typeof ProductosRoute
   '/proveedores': typeof ProveedoresRoute
+  '/recuperar': typeof RecuperarRoute
   '/reportes': typeof ReportesRoute
   '/soporte': typeof SoporteRoute
   '/usuarios': typeof UsuariosRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/nomina': typeof NominaRoute
   '/productos': typeof ProductosRoute
   '/proveedores': typeof ProveedoresRoute
+  '/recuperar': typeof RecuperarRoute
   '/reportes': typeof ReportesRoute
   '/soporte': typeof SoporteRoute
   '/usuarios': typeof UsuariosRoute
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/nomina': typeof NominaRoute
   '/productos': typeof ProductosRoute
   '/proveedores': typeof ProveedoresRoute
+  '/recuperar': typeof RecuperarRoute
   '/reportes': typeof ReportesRoute
   '/soporte': typeof SoporteRoute
   '/usuarios': typeof UsuariosRoute
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/nomina'
     | '/productos'
     | '/proveedores'
+    | '/recuperar'
     | '/reportes'
     | '/soporte'
     | '/usuarios'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/nomina'
     | '/productos'
     | '/proveedores'
+    | '/recuperar'
     | '/reportes'
     | '/soporte'
     | '/usuarios'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/nomina'
     | '/productos'
     | '/proveedores'
+    | '/recuperar'
     | '/reportes'
     | '/soporte'
     | '/usuarios'
@@ -193,6 +205,7 @@ export interface RootRouteChildren {
   NominaRoute: typeof NominaRoute
   ProductosRoute: typeof ProductosRoute
   ProveedoresRoute: typeof ProveedoresRoute
+  RecuperarRoute: typeof RecuperarRoute
   ReportesRoute: typeof ReportesRoute
   SoporteRoute: typeof SoporteRoute
   UsuariosRoute: typeof UsuariosRoute
@@ -264,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProveedoresRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/recuperar': {
+      id: '/recuperar'
+      path: '/recuperar'
+      fullPath: '/recuperar'
+      preLoaderRoute: typeof RecuperarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reportes': {
       id: '/reportes'
       path: '/reportes'
@@ -305,6 +325,7 @@ const rootRouteChildren: RootRouteChildren = {
   NominaRoute: NominaRoute,
   ProductosRoute: ProductosRoute,
   ProveedoresRoute: ProveedoresRoute,
+  RecuperarRoute: RecuperarRoute,
   ReportesRoute: ReportesRoute,
   SoporteRoute: SoporteRoute,
   UsuariosRoute: UsuariosRoute,
