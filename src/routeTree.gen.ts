@@ -20,6 +20,7 @@ import { Route as ProductosRouteImport } from './routes/productos'
 import { Route as ProveedoresRouteImport } from './routes/proveedores'
 import { Route as ReportesRouteImport } from './routes/reportes'
 import { Route as SoporteRouteImport } from './routes/soporte'
+import { Route as UsuariosRouteImport } from './routes/usuarios'
 import { Route as VentasRouteImport } from './routes/ventas'
 
 const IndexRoute = IndexRouteImport.update({
@@ -77,6 +78,11 @@ const SoporteRoute = SoporteRouteImport.update({
   path: '/soporte',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsuariosRoute = UsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VentasRoute = VentasRouteImport.update({
   id: '/ventas',
   path: '/ventas',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/proveedores': typeof ProveedoresRoute
   '/reportes': typeof ReportesRoute
   '/soporte': typeof SoporteRoute
+  '/usuarios': typeof UsuariosRoute
   '/ventas': typeof VentasRoute
 }
 export interface FileRoutesByTo {
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/proveedores': typeof ProveedoresRoute
   '/reportes': typeof ReportesRoute
   '/soporte': typeof SoporteRoute
+  '/usuarios': typeof UsuariosRoute
   '/ventas': typeof VentasRoute
 }
 export interface FileRoutesById {
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/proveedores': typeof ProveedoresRoute
   '/reportes': typeof ReportesRoute
   '/soporte': typeof SoporteRoute
+  '/usuarios': typeof UsuariosRoute
   '/ventas': typeof VentasRoute
 }
 export interface FileRouteTypes {
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/reportes'
     | '/soporte'
+    | '/usuarios'
     | '/ventas'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/reportes'
     | '/soporte'
+    | '/usuarios'
     | '/ventas'
   id:
     | '__root__'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/reportes'
     | '/soporte'
+    | '/usuarios'
     | '/ventas'
   fileRoutesById: FileRoutesById
 }
@@ -183,6 +195,7 @@ export interface RootRouteChildren {
   ProveedoresRoute: typeof ProveedoresRoute
   ReportesRoute: typeof ReportesRoute
   SoporteRoute: typeof SoporteRoute
+  UsuariosRoute: typeof UsuariosRoute
   VentasRoute: typeof VentasRoute
 }
 
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SoporteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/usuarios': {
+      id: '/usuarios'
+      path: '/usuarios'
+      fullPath: '/usuarios'
+      preLoaderRoute: typeof UsuariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ventas': {
       id: '/ventas'
       path: '/ventas'
@@ -287,6 +307,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProveedoresRoute: ProveedoresRoute,
   ReportesRoute: ReportesRoute,
   SoporteRoute: SoporteRoute,
+  UsuariosRoute: UsuariosRoute,
   VentasRoute: VentasRoute,
 }
 export const routeTree = rootRouteImport
