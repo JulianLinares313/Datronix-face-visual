@@ -23,6 +23,7 @@ import { Route as ReportesRouteImport } from './routes/reportes'
 import { Route as SoporteRouteImport } from './routes/soporte'
 import { Route as UsuariosRouteImport } from './routes/usuarios'
 import { Route as VentasRouteImport } from './routes/ventas'
+import { Route as VerificarRouteImport } from './routes/verificar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -94,6 +95,11 @@ const VentasRoute = VentasRouteImport.update({
   path: '/ventas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerificarRoute = VerificarRouteImport.update({
+  id: '/verificar',
+  path: '/verificar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -110,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/soporte': typeof SoporteRoute
   '/usuarios': typeof UsuariosRoute
   '/ventas': typeof VentasRoute
+  '/verificar': typeof VerificarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByTo {
   '/soporte': typeof SoporteRoute
   '/usuarios': typeof UsuariosRoute
   '/ventas': typeof VentasRoute
+  '/verificar': typeof VerificarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/soporte': typeof SoporteRoute
   '/usuarios': typeof UsuariosRoute
   '/ventas': typeof VentasRoute
+  '/verificar': typeof VerificarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/soporte'
     | '/usuarios'
     | '/ventas'
+    | '/verificar'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/soporte'
     | '/usuarios'
     | '/ventas'
+    | '/verificar'
   id:
     | '__root__'
     | '/'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/soporte'
     | '/usuarios'
     | '/ventas'
+    | '/verificar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -210,6 +222,7 @@ export interface RootRouteChildren {
   SoporteRoute: typeof SoporteRoute
   UsuariosRoute: typeof UsuariosRoute
   VentasRoute: typeof VentasRoute
+  VerificarRoute: typeof VerificarRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -312,6 +325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VentasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verificar': {
+      id: '/verificar'
+      path: '/verificar'
+      fullPath: '/verificar'
+      preLoaderRoute: typeof VerificarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -330,6 +350,7 @@ const rootRouteChildren: RootRouteChildren = {
   SoporteRoute: SoporteRoute,
   UsuariosRoute: UsuariosRoute,
   VentasRoute: VentasRoute,
+  VerificarRoute: VerificarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
