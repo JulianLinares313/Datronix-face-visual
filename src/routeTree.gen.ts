@@ -20,6 +20,7 @@ import { Route as ProductosRouteImport } from './routes/productos'
 import { Route as ProveedoresRouteImport } from './routes/proveedores'
 import { Route as RecuperarRouteImport } from './routes/recuperar'
 import { Route as ReportesRouteImport } from './routes/reportes'
+import { Route as RestablecerRouteImport } from './routes/restablecer'
 import { Route as SoporteRouteImport } from './routes/soporte'
 import { Route as UsuariosRouteImport } from './routes/usuarios'
 import { Route as VentasRouteImport } from './routes/ventas'
@@ -80,6 +81,11 @@ const ReportesRoute = ReportesRouteImport.update({
   path: '/reportes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RestablecerRoute = RestablecerRouteImport.update({
+  id: '/restablecer',
+  path: '/restablecer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SoporteRoute = SoporteRouteImport.update({
   id: '/soporte',
   path: '/soporte',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/proveedores': typeof ProveedoresRoute
   '/recuperar': typeof RecuperarRoute
   '/reportes': typeof ReportesRoute
+  '/restablecer': typeof RestablecerRoute
   '/soporte': typeof SoporteRoute
   '/usuarios': typeof UsuariosRoute
   '/ventas': typeof VentasRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/proveedores': typeof ProveedoresRoute
   '/recuperar': typeof RecuperarRoute
   '/reportes': typeof ReportesRoute
+  '/restablecer': typeof RestablecerRoute
   '/soporte': typeof SoporteRoute
   '/usuarios': typeof UsuariosRoute
   '/ventas': typeof VentasRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/proveedores': typeof ProveedoresRoute
   '/recuperar': typeof RecuperarRoute
   '/reportes': typeof ReportesRoute
+  '/restablecer': typeof RestablecerRoute
   '/soporte': typeof SoporteRoute
   '/usuarios': typeof UsuariosRoute
   '/ventas': typeof VentasRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/recuperar'
     | '/reportes'
+    | '/restablecer'
     | '/soporte'
     | '/usuarios'
     | '/ventas'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/recuperar'
     | '/reportes'
+    | '/restablecer'
     | '/soporte'
     | '/usuarios'
     | '/ventas'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/proveedores'
     | '/recuperar'
     | '/reportes'
+    | '/restablecer'
     | '/soporte'
     | '/usuarios'
     | '/ventas'
@@ -219,6 +231,7 @@ export interface RootRouteChildren {
   ProveedoresRoute: typeof ProveedoresRoute
   RecuperarRoute: typeof RecuperarRoute
   ReportesRoute: typeof ReportesRoute
+  RestablecerRoute: typeof RestablecerRoute
   SoporteRoute: typeof SoporteRoute
   UsuariosRoute: typeof UsuariosRoute
   VentasRoute: typeof VentasRoute
@@ -304,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/restablecer': {
+      id: '/restablecer'
+      path: '/restablecer'
+      fullPath: '/restablecer'
+      preLoaderRoute: typeof RestablecerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/soporte': {
       id: '/soporte'
       path: '/soporte'
@@ -347,6 +367,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProveedoresRoute: ProveedoresRoute,
   RecuperarRoute: RecuperarRoute,
   ReportesRoute: ReportesRoute,
+  RestablecerRoute: RestablecerRoute,
   SoporteRoute: SoporteRoute,
   UsuariosRoute: UsuariosRoute,
   VentasRoute: VentasRoute,

@@ -76,6 +76,13 @@ function Recuperar() {
             >
               Enviar instrucciones
             </button>
+
+            <Link
+              to="/restablecer"
+              className="flex w-full items-center justify-center rounded-md border border-border px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+            >
+              Ya verifiqué el código · Definir nueva contraseña
+            </Link>
           </form>
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
