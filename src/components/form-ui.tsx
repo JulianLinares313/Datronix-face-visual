@@ -1,5 +1,13 @@
+// ============================================================================
+// form-ui.tsx — Piezas reutilizables de formularios y tablas CRUD
+// BarraBusqueda, CampoFormulario, DialogoFormulario, BotonAgregar,
+// AccionesFila y EncabezadoCrud se usan en casi todos los módulos.
+// ============================================================================
+
 import { useState, type ReactNode } from "react";
+// Iconos de lucide-react (nombres fijos de la librería)
 import { Search, Pencil, Trash2, Plus } from "lucide-react";
+// Componentes del diálogo modal (shadcn/ui) — nombres fijos de la librería
 import {
   Dialog,
   DialogContent,
@@ -8,20 +16,30 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+// Utilidad para unir clases de Tailwind
 import { cn } from "@/lib/utils";
 
-export type FieldDef = {
-  name: string;
-  label: string;
-  type?: "text" | "number" | "email" | "date" | "textarea" | "select";
-  options?: string[];
-  placeholder?: string;
+// ----------------------------------------------------------------------------
+// DefinicionCampo: describe un campo de formulario de forma declarativa
+// Así cada módulo solo declara sus campos y DialogoFormulario los dibuja
+// ----------------------------------------------------------------------------
+export type DefinicionCampo = {
+  nombre: string; // identificador del campo (ej. "nombre_cliente")
+  etiqueta: string; // texto visible sobre el campo
+  tipo?: "text" | "number" | "email" | "date" | "textarea" | "select"; // tipo de entrada
+  opciones?: string[]; // opciones cuando el tipo es "select"
+  placeholder?: string; // texto de ayuda dentro del campo
 };
 
-export function SearchBar({ placeholder }: { placeholder: string }) {
+// ----------------------------------------------------------------------------
+// BarraBusqueda: caja con icono de lupa + input de búsqueda (solo visual)
+// ----------------------------------------------------------------------------
+export function BarraBusqueda({ placeholder }: { placeholder: string }) {
   return (
     <div className="flex w-full max-w-sm items-center gap-2 rounded-md border border-border bg-card px-3 py-2">
+      {/* Icono de lupa */}
       <Search className="size-4 text-muted-foreground" />
+      {/* Campo de texto transparente que ocupa todo el ancho */}
       <input
         className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
         placeholder={placeholder}
@@ -30,81 +48,104 @@ export function SearchBar({ placeholder }: { placeholder: string }) {
   );
 }
 
-export function FieldInput({ field }: { field: FieldDef }) {
-  const base =
+// ----------------------------------------------------------------------------
+// CampoFormulario: dibuja UN campo según su DefinicionCampo
+// Soporta: textarea, select (lista desplegable) e input normal
+// ----------------------------------------------------------------------------
+export function CampoFormulario({ campo }: { campo: DefinicionCampo }) {
+  // Clases base compartidas por todos los tipos de campo
+  const clasesBase =
     "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/40";
   return (
+    // <label> envuelve todo: al hacer clic en el texto se enfoca el campo
     <label className="block space-y-1.5">
+      {/* Texto de la etiqueta */}
       <span className="text-xs font-medium text-muted-foreground">
-        {field.label}
+        {campo.etiqueta}
       </span>
-      {field.type === "textarea" ? (
-        <textarea rows={3} className={base} placeholder={field.placeholder} />
-      ) : field.type === "select" ? (
-        <select className={base} defaultValue="">
+      {/* Se elige el control según el tipo declarado */}
+      {campo.tipo === "textarea" ? (
+        // Área de texto de varias líneas
+        <textarea rows={3} className={clasesBase} placeholder={campo.placeholder} />
+      ) : campo.tipo === "select" ? (
+        // Lista desplegable con placeholder deshabilitado + opciones
+        <select className={clasesBase} defaultValue="">
           <option value="" disabled>
             Seleccionar...
           </option>
-          {field.options?.map((o) => (
-            <option key={o} value={o}>
-              {o}
+          {/* Una <option> por cada texto del arreglo "opciones" */}
+          {campo.opciones?.map((opcion) => (
+            <option key={opcion} value={opcion}>
+              {opcion}
             </option>
           ))}
         </select>
       ) : (
+        // Input normal (texto, número, correo o fecha según "tipo")
         <input
-          type={field.type ?? "text"}
-          className={base}
-          placeholder={field.placeholder}
+          type={campo.tipo ?? "text"}
+          className={clasesBase}
+          placeholder={campo.placeholder}
         />
       )}
     </label>
   );
 }
 
-export function FormDialog({
-  title,
-  fields,
-  trigger,
-  submitLabel = "Guardar",
-  columns = 2,
+// ----------------------------------------------------------------------------
+// DialogoFormulario: ventana modal con un formulario generado desde campos
+// "disparador" es el botón que abre el modal (ej. BotonAgregar)
+// ----------------------------------------------------------------------------
+export function DialogoFormulario({
+  titulo, // título del modal
+  campos, // arreglo de DefinicionCampo a dibujar
+  disparador, // elemento que abre el modal al hacer clic
+  etiquetaGuardar = "Guardar", // texto del botón principal
+  columnas = 2, // campos en 1 o 2 columnas
 }: {
-  title: string;
-  fields: FieldDef[];
-  trigger: ReactNode;
-  submitLabel?: string;
-  columns?: 1 | 2;
+  titulo: string;
+  campos: DefinicionCampo[];
+  disparador: ReactNode;
+  etiquetaGuardar?: string;
+  columnas?: 1 | 2;
 }) {
-  const [open, setOpen] = useState(false);
+  // Estado local: controla si el modal está abierto o cerrado
+  const [abierto, setAbierto] = useState(false);
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+    <Dialog open={abierto} onOpenChange={setAbierto}>
+      {/* El disparador recibe el comportamiento de abrir el modal */}
+      <DialogTrigger asChild>{disparador}</DialogTrigger>
+      {/* Contenido del modal con scroll si es muy alto */}
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>{titulo}</DialogTitle>
         </DialogHeader>
+        {/* Cuadrícula de campos: 1 o 2 columnas según el parámetro */}
         <div
           className={cn(
             "grid gap-3",
-            columns === 2 ? "sm:grid-cols-2" : "grid-cols-1",
+            columnas === 2 ? "sm:grid-cols-2" : "grid-cols-1",
           )}
         >
-          {fields.map((f) => (
-            <FieldInput key={f.name} field={f} />
+          {/* Se dibuja un CampoFormulario por cada definición */}
+          {campos.map((campo) => (
+            <CampoFormulario key={campo.nombre} campo={campo} />
           ))}
         </div>
         <DialogFooter>
+          {/* Cancelar solo cierra el modal (visual) */}
           <button
-            onClick={() => setOpen(false)}
+            onClick={() => setAbierto(false)}
             className="rounded-md border border-border px-4 py-2 text-sm hover:bg-muted"
           >
             Cancelar
           </button>
+          {/* Guardar solo cierra el modal; la lógica la hará el backend */}
           <button
-            onClick={() => setOpen(false)}
+            onClick={() => setAbierto(false)}
             className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
           >
-            {submitLabel}
+            {etiquetaGuardar}
           </button>
         </DialogFooter>
       </DialogContent>
@@ -112,23 +153,31 @@ export function FormDialog({
   );
 }
 
-export function AddButton({ label }: { label: string }) {
+// ----------------------------------------------------------------------------
+// BotonAgregar: botón azul con icono + (se usa como disparador del modal)
+// ----------------------------------------------------------------------------
+export function BotonAgregar({ etiqueta }: { etiqueta: string }) {
   return (
     <button className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
-      <Plus className="size-4" /> {label}
+      <Plus className="size-4" /> {etiqueta}
     </button>
   );
 }
 
-export function RowActions() {
+// ----------------------------------------------------------------------------
+// AccionesFila: botones Editar (lápiz) y Eliminar (caneca) para cada fila
+// ----------------------------------------------------------------------------
+export function AccionesFila() {
   return (
     <div className="flex gap-1">
+      {/* Botón editar */}
       <button
         aria-label="Editar"
         className="rounded-md border border-border p-1.5 text-primary hover:bg-muted"
       >
         <Pencil className="size-3.5" />
       </button>
+      {/* Botón eliminar */}
       <button
         aria-label="Eliminar"
         className="rounded-md border border-border p-1.5 text-destructive hover:bg-muted"
@@ -139,26 +188,31 @@ export function RowActions() {
   );
 }
 
-export function CrudHeader({
-  title,
-  searchPlaceholder,
-  addLabel,
-  fields,
+// ----------------------------------------------------------------------------
+// EncabezadoCrud: fila estándar de los CRUD = título + buscador + botón agregar
+// ----------------------------------------------------------------------------
+export function EncabezadoCrud({
+  titulo,
+  placeholderBusqueda,
+  etiquetaAgregar,
+  campos,
 }: {
-  title: string;
-  searchPlaceholder: string;
-  addLabel: string;
-  fields: FieldDef[];
+  titulo: string;
+  placeholderBusqueda: string;
+  etiquetaAgregar: string;
+  campos: DefinicionCampo[];
 }) {
   return (
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-      <h1 className="text-xl font-semibold">{title}</h1>
+      {/* Título del módulo */}
+      <h1 className="text-xl font-semibold">{titulo}</h1>
+      {/* Buscador + botón que abre el modal de agregar */}
       <div className="flex flex-wrap items-center gap-2">
-        <SearchBar placeholder={searchPlaceholder} />
-        <FormDialog
-          title={addLabel}
-          fields={fields}
-          trigger={<AddButton label={addLabel} />}
+        <BarraBusqueda placeholder={placeholderBusqueda} />
+        <DialogoFormulario
+          titulo={etiquetaAgregar}
+          campos={campos}
+          disparador={<BotonAgregar etiqueta={etiquetaAgregar} />}
         />
       </div>
     </div>
