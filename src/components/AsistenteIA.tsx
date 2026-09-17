@@ -1,16 +1,32 @@
+// ============================================================================
+// AsistenteIA.tsx — Chat flotante de preguntas frecuentes (modo demostración)
+// Botón redondo en la esquina inferior derecha que abre una ventana de chat.
+// Responde solo las preguntas frecuentes definidas abajo; lo demás da un
+// mensaje genérico (el backend IA se conectará después).
+// ============================================================================
+
 import { useState } from "react";
+// Iconos: robot, enviar, cerrar y chispa
 import { Bot, Send, X, Sparkles } from "lucide-react";
+// Utilidad para unir clases condicionalmente
 import { cn } from "@/lib/utils";
 
-const faqs = [
+// ----------------------------------------------------------------------------
+// preguntasFrecuentes: botones de acceso rápido que se muestran en el chat
+// ----------------------------------------------------------------------------
+const preguntasFrecuentes = [
   "¿Cómo registro una venta?",
   "¿Qué hago con un crédito vencido?",
   "¿Cómo repongo stock bajo?",
   "¿Dónde veo las remisiones?",
 ];
 
-type Msg = { from: "ia" | "user"; text: string };
+// Tipo de cada mensaje del chat: quién lo envía (ia o user) y el texto
+type Mensaje = { de: "ia" | "usuario"; texto: string };
 
+// ----------------------------------------------------------------------------
+// respuestas: diccionario pregunta → respuesta predefinida
+// ----------------------------------------------------------------------------
 const respuestas: Record<string, string> = {
   "¿Cómo registro una venta?":
     "Ve al módulo Ventas, busca el cliente por cédula, agrega productos al carrito, define dirección de entrega y estado de pago (CONTADO o CRÉDITO) y finaliza. La remisión se genera automáticamente.",
@@ -23,84 +39,103 @@ const respuestas: Record<string, string> = {
 };
 
 export function AsistenteIA() {
-  const [open, setOpen] = useState(false);
-  const [msgs, setMsgs] = useState<Msg[]>([
+  // Estado: si la ventana de chat está abierta
+  const [abierto, setAbierto] = useState(false);
+  // Estado: lista de mensajes del chat (arranca con el saludo de la IA)
+  const [mensajes, setMensajes] = useState<Mensaje[]>([
     {
-      from: "ia",
-      text: "¡Hola! Soy el asistente Datronix IA. ¿En qué te ayudo hoy?",
+      de: "ia",
+      texto: "¡Hola! Soy el asistente Datronix IA. ¿En qué te ayudo hoy?",
     },
   ]);
-  const [text, setText] = useState("");
+  // Estado: texto que el usuario está escribiendo
+  const [texto, setTexto] = useState("");
 
-  function send(value: string) {
-    if (!value.trim()) return;
-    setMsgs((m) => [
-      ...m,
-      { from: "user", text: value },
+  // --------------------------------------------------------------------------
+  // enviar: agrega el mensaje del usuario y la respuesta de la IA al chat
+  // Si la pregunta existe en el diccionario, usa esa respuesta; si no, responde
+  // con el mensaje genérico de demostración.
+  // --------------------------------------------------------------------------
+  function enviar(valor: string) {
+    // No enviar mensajes vacíos
+    if (!valor.trim()) return;
+    setMensajes((lista) => [
+      ...lista, // mensajes anteriores
+      { de: "usuario", texto: valor }, // mensaje del usuario
       {
-        from: "ia",
-        text:
-          respuestas[value] ??
-          "Estoy en modo demostración. Pronto podré responder consultas sobre tus ventas, inventario y cartera en tiempo real.",
+        de: "ia",
+        texto:
+          respuestas[valor] ?? // respuesta conocida...
+          "Estoy en modo demostración. Pronto podré responder consultas sobre tus ventas, inventario y cartera en tiempo real.", // ...o genérica
       },
     ]);
-    setText("");
+    // Limpiar la caja de texto
+    setTexto("");
   }
 
   return (
     <>
+      {/* Botón flotante redondo que abre/cierra el chat */}
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setAbierto((valor) => !valor)}
         aria-label="Asistente IA"
         className="fixed bottom-5 right-5 z-50 flex size-14 items-center justify-center rounded-full bg-gradient-header text-primary-foreground shadow-card transition-transform hover:scale-105"
       >
-        {open ? <X className="size-6" /> : <Bot className="size-6" />}
+        {/* Icono X si está abierto, robot si está cerrado */}
+        {abierto ? <X className="size-6" /> : <Bot className="size-6" />}
       </button>
 
-      {open && (
+      {/* Ventana del chat: solo se pinta cuando está abierta */}
+      {abierto && (
         <div className="fixed bottom-24 right-5 z-50 flex h-[26rem] w-[22rem] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card">
+          {/* Encabezado azul del chat */}
           <div className="flex items-center gap-2 bg-gradient-header px-4 py-3 text-primary-foreground">
             <Sparkles className="size-4" />
             <p className="text-sm font-semibold">Datronix IA</p>
           </div>
 
+          {/* Zona de mensajes con scroll */}
           <div className="flex-1 space-y-3 overflow-y-auto p-3">
-            {msgs.map((m, i) => (
+            {mensajes.map((m, i) => (
               <div
                 key={i}
                 className={cn(
                   "max-w-[85%] rounded-lg px-3 py-2 text-sm",
-                  m.from === "ia"
+                  // Burbujas de la IA a la izquierda (gris), del usuario a la derecha (azul)
+                  m.de === "ia"
                     ? "bg-muted text-foreground"
                     : "ml-auto bg-primary text-primary-foreground",
                 )}
               >
-                {m.text}
+                {m.texto}
               </div>
             ))}
+            {/* Botones de preguntas frecuentes */}
             <div className="flex flex-wrap gap-1.5 pt-1">
-              {faqs.map((f) => (
+              {preguntasFrecuentes.map((pregunta) => (
                 <button
-                  key={f}
-                  onClick={() => send(f)}
+                  key={pregunta}
+                  onClick={() => enviar(pregunta)}
                   className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground hover:bg-muted"
                 >
-                  {f}
+                  {pregunta}
                 </button>
               ))}
             </div>
           </div>
 
+          {/* Caja de texto + botón enviar */}
           <div className="flex items-center gap-2 border-t border-border p-2">
             <input
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && send(text)}
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
+              // Enter también envía el mensaje
+              onKeyDown={(e) => e.key === "Enter" && enviar(texto)}
               placeholder="Escribe tu consulta..."
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none"
             />
             <button
-              onClick={() => send(text)}
+              onClick={() => enviar(texto)}
               aria-label="Enviar"
               className="rounded-md bg-primary p-2 text-primary-foreground hover:opacity-90"
             >
