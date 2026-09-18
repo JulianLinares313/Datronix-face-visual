@@ -1,8 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { DashboardLayout } from "@/components/DashboardLayout";
-import { Panel, DataTable, StatCard } from "@/components/module-ui";
-import { CrudHeader, RowActions, type FieldDef } from "@/components/form-ui";
+// ============================================================================
+// clientes.tsx — CRUD visual de Clientes
+// Encabezado con buscador + botón "Agregar cliente" (modal), 3 KPIs y tabla.
+// Los nombres de los campos (nombre, etiqueta) coinciden con la tabla Cliente
+// del backend: id_cliente, nombre_cliente, telefono_cliente, etc.
+// ============================================================================
 
+import { createFileRoute } from "@tanstack/react-router";
+import { LayoutPanel } from "@/components/DashboardLayout";
+import { Panel, TablaDatos, TarjetaEstadistica } from "@/components/module-ui";
+import { EncabezadoCrud, AccionesFila, type DefinicionCampo } from "@/components/form-ui";
+
+// Ruta "/clientes" con sus metadatos SEO
 export const Route = createFileRoute("/clientes")({
   head: () => ({
     meta: [
@@ -22,45 +30,55 @@ export const Route = createFileRoute("/clientes")({
   component: Clientes,
 });
 
-const campos: FieldDef[] = [
-  { name: "id_cliente", label: "ID (Cédula / RUC)", placeholder: "1020334" },
-  { name: "nombre_cliente", label: "Nombre", placeholder: "Andrea Ruiz" },
-  { name: "telefono_cliente", label: "Teléfono", placeholder: "300 000 0000" },
-  { name: "email_cliente", label: "Correo", type: "email" },
-  { name: "direccion_cliente", label: "Dirección", placeholder: "Cra 10 #20-30" },
+// ----------------------------------------------------------------------------
+// camposCliente: definición de los campos del formulario "Agregar cliente"
+// El tipo "select" dibuja una lista desplegable con las opciones dadas
+// ----------------------------------------------------------------------------
+const camposCliente: DefinicionCampo[] = [
+  { nombre: "id_cliente", etiqueta: "ID (Cédula / RUC)", placeholder: "1020334" },
+  { nombre: "nombre_cliente", etiqueta: "Nombre", placeholder: "Andrea Ruiz" },
+  { nombre: "telefono_cliente", etiqueta: "Teléfono", placeholder: "300 000 0000" },
+  { nombre: "email_cliente", etiqueta: "Correo", tipo: "email" },
+  { nombre: "direccion_cliente", etiqueta: "Dirección", placeholder: "Cra 10 #20-30" },
   {
-    name: "tipo_cliente",
-    label: "Tipo de cliente",
-    type: "select",
-    options: ["NATURAL", "JURIDICO", "MAYORISTA"],
+    nombre: "tipo_cliente",
+    etiqueta: "Tipo de cliente",
+    tipo: "select",
+    opciones: ["NATURAL", "JURIDICO", "MAYORISTA"],
   },
 ];
 
+// ----------------------------------------------------------------------------
+// Clientes: pantalla del módulo
+// ----------------------------------------------------------------------------
 function Clientes() {
   return (
-    <DashboardLayout breadcrumb="Administrador/CRM/Clientes">
-      <CrudHeader
-        title="Clientes"
-        searchPlaceholder="Buscar por ID o nombre..."
-        addLabel="Agregar cliente"
-        fields={campos}
+    <LayoutPanel rutaMiga="Administrador/CRM/Clientes">
+      {/* Encabezado: título + buscador + botón que abre el modal de registro */}
+      <EncabezadoCrud
+        titulo="Clientes"
+        placeholderBusqueda="Buscar por ID o nombre..."
+        etiquetaAgregar="Agregar cliente"
+        campos={camposCliente}
       />
+      {/* Tarjetas KPI del módulo */}
       <div className="mb-4 grid gap-4 sm:grid-cols-3">
-        <StatCard label="Clientes registrados" value="1.284" />
-        <StatCard label="Nuevos este mes" value="34" />
-        <StatCard label="Con crédito pendiente" value="12" />
+        <TarjetaEstadistica etiqueta="Clientes registrados" valor="1.284" />
+        <TarjetaEstadistica etiqueta="Nuevos este mes" valor="34" />
+        <TarjetaEstadistica etiqueta="Con crédito pendiente" valor="12" />
       </div>
+      {/* Tabla de clientes (datos de ejemplo) */}
       <Panel>
-        <DataTable
-          columns={["ID", "Nombre", "Teléfono", "Correo", "Dirección", "Tipo", "Acciones"]}
-          rows={[
-            ["1.020.334", "Andrea Ruiz", "300 445 1120", "andrea@mail.com", "Cra 10 #20-30, Bogotá", "NATURAL", <RowActions />],
-            ["900.771-2", "Comercial JR", "601 344 8890", "ventas@jr.com", "Cl 45 #12-08, Medellín", "JURIDICO", <RowActions />],
-            ["79.554.221", "Luis Ortega", "310 887 2211", "lortega@mail.com", "Av 6 #14-22, Cali", "NATURAL", <RowActions />],
-            ["901.004-8", "Distribuciones M", "605 221 3344", "compras@dism.com", "Cl 72 #40-11, Barranquilla", "MAYORISTA", <RowActions />],
+        <TablaDatos
+          columnas={["ID", "Nombre", "Teléfono", "Correo", "Dirección", "Tipo", "Acciones"]}
+          filas={[
+            ["1.020.334", "Andrea Ruiz", "300 445 1120", "andrea@mail.com", "Cra 10 #20-30, Bogotá", "NATURAL", <AccionesFila />],
+            ["900.771-2", "Comercial JR", "601 344 8890", "ventas@jr.com", "Cl 45 #12-08, Medellín", "JURIDICO", <AccionesFila />],
+            ["79.554.221", "Luis Ortega", "310 887 2211", "lortega@mail.com", "Av 6 #14-22, Cali", "NATURAL", <AccionesFila />],
+            ["901.004-8", "Distribuciones M", "605 221 3344", "compras@dism.com", "Cl 72 #40-11, Barranquilla", "MAYORISTA", <AccionesFila />],
           ]}
         />
       </Panel>
-    </DashboardLayout>
+    </LayoutPanel>
   );
 }
