@@ -1,20 +1,33 @@
+// ============================================================================
+// compras.tsx — Módulo de COMPRAS (entrada de mercancía al inventario)
+// Flujo del documento:
+//   1. Buscar y seleccionar el proveedor
+//   2. Fecha de compra (por defecto hoy) y observaciones
+//   3. Tabla dinámica de productos: cantidad + precio unitario → subtotal
+//   4. Total automático y botón "Registrar compra"
+// Al registrar, el backend SUMARÁ el stock de cada producto.
+// El listado tiene filtros por fecha y proveedor, ver detalle, anular y PDF.
+// ============================================================================
+
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+// Iconos usados en la pantalla
 import {
-  ShoppingCart,
-  Search,
-  Plus,
-  Trash2,
-  Eye,
-  XCircle,
-  FileText,
-  Calendar,
-  Filter,
-  Package,
-  CheckCircle2,
+  ShoppingCart, // carrito → KPI compras
+  Search, // lupa → buscadores
+  Plus, // más → agregar fila de producto
+  Trash2, // caneca → quitar fila
+  Eye, // ojo → ver detalle
+  XCircle, // equis → anular compra
+  FileText, // documento → PDF
+  Calendar, // calendario → filtros de fecha
+  Filter, // embudo → filtro por proveedor
+  Package, // paquete → KPI productos
+  CheckCircle2, // check → registrar compra
 } from "lucide-react";
-import { DashboardLayout } from "@/components/DashboardLayout";
-import { Panel, DataTable, StatCard } from "@/components/module-ui";
+import { LayoutPanel } from "@/components/DashboardLayout";
+import { Panel, TablaDatos, TarjetaEstadistica } from "@/components/module-ui";
+// Componentes del modal de detalle (shadcn/ui)
 import {
   Dialog,
   DialogContent,
@@ -22,6 +35,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+// Ruta "/compras" con metadatos SEO
 export const Route = createFileRoute("/compras")({
   head: () => ({
     meta: [
@@ -42,22 +56,30 @@ export const Route = createFileRoute("/compras")({
   component: Compras,
 });
 
-const input =
+// Clases base de los inputs de esta pantalla
+const claseInput =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/40";
 
-const proveedoresMock = [
+// ----------------------------------------------------------------------------
+// DATOS DE EJEMPLO (mock) — se reemplazarán por llamadas al backend
+// ----------------------------------------------------------------------------
+
+// Proveedores registrados (vendrán de GET /api/proveedores)
+const proveedoresEjemplo = [
   { id: 1, empresa: "Tecno Import SAS", contacto: "Jorge Peña" },
   { id: 2, empresa: "Delta Distribuciones", contacto: "Marcela Ríos" },
   { id: 3, empresa: "Andina Hardware", contacto: "Camilo Vega" },
 ];
 
-const productosMock = [
+// Productos disponibles para comprar (vendrán de GET /api/productos)
+const productosEjemplo = [
   { id: 101, nombre: "Teclado mecánico K80", precio: 120000 },
   { id: 102, nombre: "Mouse inalámbrico M2", precio: 52000 },
   { id: 103, nombre: 'Monitor 27" QHD', precio: 980000 },
 ];
 
-const comprasMock = [
+// Compras ya registradas (vendrán del listado de compras del backend)
+const comprasEjemplo = [
   {
     id: 1001,
     fecha: "2026-09-05",
@@ -81,31 +103,40 @@ const comprasMock = [
   },
 ];
 
+// formatearPesos: convierte un número a formato de moneda colombiana ($1.200.000)
 function formatearPesos(valor: number) {
   return `$${valor.toLocaleString("es-CO")}`;
 }
 
-function hoy() {
+// fechaHoy: devuelve la fecha de hoy en formato AAAA-MM-DD (para el input date)
+function fechaHoy() {
   return new Date().toISOString().split("T")[0];
 }
 
+// ----------------------------------------------------------------------------
+// Compras: pantalla del módulo
+// ----------------------------------------------------------------------------
 export default function Compras() {
-  const [fecha, setFecha] = useState(hoy());
-  const [proveedorBusqueda, setProveedorBusqueda] = useState("");
-  const [proveedorSeleccionado, setProveedorSeleccionado] = useState<typeof proveedoresMock[0] | null>(null);
-  const [observaciones, setObservaciones] = useState("");
-  const [filas, setFilas] = useState<{ productoId: number; nombre: string; cantidad: number; precio: number }[]>([]);
-  const [productoBusqueda, setProductoBusqueda] = useState("");
-  const [cantidad, setCantidad] = useState(1);
-  const [precio, setPrecio] = useState(0);
-  const [productoSeleccionado, setProductoSeleccionado] = useState<typeof productosMock[0] | null>(null);
-  const [detalleAbierto, setDetalleAbierto] = useState(false);
-  const [compraDetalle, setCompraDetalle] = useState<typeof comprasMock[0] | null>(null);
+  // ---- Estados del formulario "Registrar compra" ----
+  const [fecha, setFecha] = useState(fechaHoy()); // fecha de compra (hoy por defecto)
+  const [proveedorBusqueda, setProveedorBusqueda] = useState(""); // texto del buscador de proveedor
+  const [proveedorSeleccionado, setProveedorSeleccionado] = useState<typeof proveedoresEjemplo[0] | null>(null); // proveedor elegido
+  const [observaciones, setObservaciones] = useState(""); // observaciones de la compra
+  const [filas, setFilas] = useState<{ productoId: number; nombre: string; cantidad: number; precio: number }[]>([]); // productos agregados
+  const [productoBusqueda, setProductoBusqueda] = useState(""); // texto del buscador de producto
+  const [cantidad, setCantidad] = useState(1); // cantidad a comprar
+  const [precio, setPrecio] = useState(0); // precio unitario de compra
+  const [productoSeleccionado, setProductoSeleccionado] = useState<typeof productosEjemplo[0] | null>(null); // producto elegido
+  // ---- Estados del modal de detalle ----
+  const [detalleAbierto, setDetalleAbierto] = useState(false); // si el modal está abierto
+  const [compraDetalle, setCompraDetalle] = useState<typeof comprasEjemplo[0] | null>(null); // compra a mostrar
 
-  const totalCompra = filas.reduce((sum, f) => sum + f.cantidad * f.precio, 0);
+  // Total de la compra: suma de (cantidad × precio) de cada fila
+  const totalCompra = filas.reduce((suma, fila) => suma + fila.cantidad * fila.precio, 0);
 
+  // buscarProveedor: busca por ID o por nombre de empresa (visual, datos de ejemplo)
   function buscarProveedor() {
-    const encontrado = proveedoresMock.find(
+    const encontrado = proveedoresEjemplo.find(
       (p) =>
         p.id.toString() === proveedorBusqueda ||
         p.empresa.toLowerCase().includes(proveedorBusqueda.toLowerCase())
@@ -113,16 +144,18 @@ export default function Compras() {
     setProveedorSeleccionado(encontrado ?? null);
   }
 
-  function seleccionarProducto(producto: typeof productosMock[0]) {
+  // seleccionarProducto: llena el buscador y el precio con el producto elegido
+  function seleccionarProducto(producto: typeof productosEjemplo[0]) {
     setProductoSeleccionado(producto);
     setPrecio(producto.precio);
     setProductoBusqueda(producto.nombre);
   }
 
+  // agregarFila: valida cantidad/precio > 0 y agrega el producto a la tabla
   function agregarFila() {
     if (!productoSeleccionado || cantidad <= 0 || precio <= 0) return;
-    setFilas((prev) => [
-      ...prev,
+    setFilas((anteriores) => [
+      ...anteriores,
       {
         productoId: productoSeleccionado.id,
         nombre: productoSeleccionado.nombre,
@@ -130,36 +163,42 @@ export default function Compras() {
         precio,
       },
     ]);
+    // Limpia el buscador para agregar otro producto
     setProductoSeleccionado(null);
     setProductoBusqueda("");
     setCantidad(1);
     setPrecio(0);
   }
 
-  function quitarFila(index: number) {
-    setFilas((prev) => prev.filter((_, i) => i !== index));
+  // quitarFila: elimina una fila de la tabla por su posición
+  function quitarFila(indice: number) {
+    setFilas((anteriores) => anteriores.filter((_, i) => i !== indice));
   }
 
-  function verDetalle(compra: typeof comprasMock[0]) {
+  // verDetalle: abre el modal con la compra seleccionada
+  function verDetalle(compra: typeof comprasEjemplo[0]) {
     setCompraDetalle(compra);
     setDetalleAbierto(true);
   }
 
   return (
-    <DashboardLayout breadcrumb="Administrador/Compras/Compras">
+    <LayoutPanel rutaMiga="Administrador/Compras/Compras">
       <h1 className="mb-4 text-xl font-semibold">Gestión de compras</h1>
 
+      {/* ---- KPIs del módulo ---- */}
       <div className="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Compras del mes" value="12" icon={<ShoppingCart className="size-5" />} />
-        <StatCard label="Total comprado" value="$8.420.000" icon={<FileText className="size-5" />} />
-        <StatCard label="Proveedores con compras" value="5" icon={<Package className="size-5" />} />
-        <StatCard label="Productos ingresados" value="340" icon={<Plus className="size-5" />} />
+        <TarjetaEstadistica etiqueta="Compras del mes" valor="12" icono={<ShoppingCart className="size-5" />} />
+        <TarjetaEstadistica etiqueta="Total comprado" valor="$8.420.000" icono={<FileText className="size-5" />} />
+        <TarjetaEstadistica etiqueta="Proveedores con compras" valor="5" icono={<Package className="size-5" />} />
+        <TarjetaEstadistica etiqueta="Productos ingresados" valor="340" icono={<Plus className="size-5" />} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
+        {/* ======== Columna izquierda: formulario de registro ======== */}
         <div className="space-y-4 lg:col-span-2">
-          <Panel title="Registrar compra">
+          <Panel titulo="Registrar compra">
             <div className="grid gap-4 sm:grid-cols-2">
+              {/* Buscador de proveedor */}
               <div className="space-y-1.5 sm:col-span-2">
                 <span className="text-xs font-medium text-muted-foreground">Proveedor</span>
                 <div className="flex gap-2">
@@ -179,6 +218,7 @@ export default function Compras() {
                     Buscar
                   </button>
                 </div>
+                {/* Ficha del proveedor encontrado o mensaje de ayuda */}
                 {proveedorSeleccionado ? (
                   <div className="rounded-md bg-muted/60 p-3 text-sm">
                     <p className="font-medium">{proveedorSeleccionado.empresa}</p>
@@ -189,32 +229,36 @@ export default function Compras() {
                 )}
               </div>
 
+              {/* Fecha de compra (hoy por defecto) */}
               <label className="block space-y-1.5">
                 <span className="text-xs font-medium text-muted-foreground">Fecha de compra</span>
                 <div className="flex items-center gap-2">
                   <Calendar className="size-4 text-muted-foreground" />
                   <input
                     type="date"
-                    className={input}
+                    className={claseInput}
                     value={fecha}
                     onChange={(e) => setFecha(e.target.value)}
                   />
                 </div>
               </label>
 
+              {/* Observaciones */}
               <label className="block space-y-1.5 sm:col-span-2">
                 <span className="text-xs font-medium text-muted-foreground">Observaciones</span>
                 <textarea
                   rows={2}
-                  className={input}
+                  className={claseInput}
                   value={observaciones}
                   onChange={(e) => setObservaciones(e.target.value)}
                 />
               </label>
             </div>
 
+            {/* ---- Tabla dinámica de productos comprados ---- */}
             <div className="mt-4 rounded-md border border-border p-3">
               <h3 className="mb-2 text-sm font-semibold">Productos comprados</h3>
+              {/* Fila para agregar: buscador de producto + cantidad + precio + botón */}
               <div className="grid gap-3 sm:grid-cols-[1fr_6rem_7rem_auto]">
                 <div className="relative">
                   <div className="flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2">
@@ -226,9 +270,10 @@ export default function Compras() {
                       onChange={(e) => setProductoBusqueda(e.target.value)}
                     />
                   </div>
+                  {/* Lista desplegable de coincidencias mientras se escribe */}
                   {productoBusqueda && !productoSeleccionado && (
                     <div className="absolute z-10 mt-1 w-full rounded-md border border-border bg-card shadow-card">
-                      {productosMock
+                      {productosEjemplo
                         .filter((p) => p.nombre.toLowerCase().includes(productoBusqueda.toLowerCase()))
                         .map((p) => (
                           <button
@@ -242,22 +287,25 @@ export default function Compras() {
                     </div>
                   )}
                 </div>
+                {/* Cantidad a comprar */}
                 <input
                   type="number"
                   min={1}
                   value={cantidad}
                   onChange={(e) => setCantidad(Number(e.target.value))}
-                  className={input}
+                  className={claseInput}
                   aria-label="Cantidad"
                 />
+                {/* Precio unitario de compra */}
                 <input
                   type="number"
                   min={0}
                   value={precio || ""}
                   onChange={(e) => setPrecio(Number(e.target.value))}
-                  className={input}
+                  className={claseInput}
                   aria-label="Precio unitario"
                 />
+                {/* Botón para agregar la fila */}
                 <button
                   onClick={agregarFila}
                   className="inline-flex items-center justify-center gap-1 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
@@ -266,25 +314,28 @@ export default function Compras() {
                 </button>
               </div>
 
+              {/* Tabla de filas agregadas con subtotal por fila */}
               <div className="mt-3 overflow-x-auto">
                 <table className="w-full min-w-[480px] text-sm">
                   <thead>
                     <tr className="bg-primary-soft text-left text-secondary-foreground">
-                      {["Producto", "Cantidad", "Precio unitario", "Subtotal", ""].map((c) => (
-                        <th key={c} className="px-3 py-2 font-semibold">
-                          {c}
+                      {["Producto", "Cantidad", "Precio unitario", "Subtotal", ""].map((columna) => (
+                        <th key={columna} className="px-3 py-2 font-semibold">
+                          {columna}
                         </th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {filas.map((f, i) => (
+                    {filas.map((fila, i) => (
                       <tr key={i} className="border-b border-border last:border-0">
-                        <td className="px-3 py-2">{f.nombre}</td>
-                        <td className="px-3 py-2">{f.cantidad}</td>
-                        <td className="px-3 py-2">{formatearPesos(f.precio)}</td>
-                        <td className="px-3 py-2">{formatearPesos(f.cantidad * f.precio)}</td>
+                        <td className="px-3 py-2">{fila.nombre}</td>
+                        <td className="px-3 py-2">{fila.cantidad}</td>
+                        <td className="px-3 py-2">{formatearPesos(fila.precio)}</td>
+                        {/* Subtotal = cantidad × precio */}
+                        <td className="px-3 py-2">{formatearPesos(fila.cantidad * fila.precio)}</td>
                         <td className="px-3 py-2">
+                          {/* Quitar la fila */}
                           <button
                             onClick={() => quitarFila(i)}
                             aria-label="Quitar"
@@ -295,6 +346,7 @@ export default function Compras() {
                         </td>
                       </tr>
                     ))}
+                    {/* Mensaje cuando no hay productos agregados */}
                     {filas.length === 0 && (
                       <tr>
                         <td colSpan={5} className="px-3 py-4 text-center text-sm text-muted-foreground">
@@ -307,6 +359,7 @@ export default function Compras() {
               </div>
             </div>
 
+            {/* Total automático + botón registrar */}
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
               <div className="text-sm">
                 <span className="text-muted-foreground">Total compra: </span>
@@ -322,39 +375,45 @@ export default function Compras() {
           </Panel>
         </div>
 
+        {/* ======== Columna derecha: listado de compras ======== */}
         <div className="space-y-4">
-          <Panel title="Listado de compras">
+          <Panel titulo="Listado de compras">
+            {/* Filtros: por fecha y por proveedor */}
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <div className="flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2">
                 <Calendar className="size-4 text-muted-foreground" />
-                <input type="date" className="bg-transparent text-sm outline-none" defaultValue={hoy()} />
+                <input type="date" className="bg-transparent text-sm outline-none" defaultValue={fechaHoy()} />
               </div>
               <div className="flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2">
                 <Filter className="size-4 text-muted-foreground" />
                 <input className="bg-transparent text-sm outline-none" placeholder="Proveedor..." />
               </div>
             </div>
-            <DataTable
-              columns={["ID", "Fecha", "Proveedor", "Total", "Acciones"]}
-              rows={comprasMock.map((c) => [
-                c.id.toString(),
-                c.fecha,
-                c.proveedor,
-                formatearPesos(c.total),
-                <div key={c.id} className="flex gap-1">
+            {/* Tabla de compras con acciones: ver detalle, anular y PDF */}
+            <TablaDatos
+              columnas={["ID", "Fecha", "Proveedor", "Total", "Acciones"]}
+              filas={comprasEjemplo.map((compra) => [
+                compra.id.toString(),
+                compra.fecha,
+                compra.proveedor,
+                formatearPesos(compra.total),
+                <div key={compra.id} className="flex gap-1">
+                  {/* Ver detalle (abre el modal) */}
                   <button
-                    onClick={() => verDetalle(c)}
+                    onClick={() => verDetalle(compra)}
                     aria-label="Ver detalle"
                     className="rounded-md border border-border p-1.5 text-primary hover:bg-muted"
                   >
                     <Eye className="size-3.5" />
                   </button>
+                  {/* Anular compra (el backend revertirá el stock) */}
                   <button
                     aria-label="Anular"
                     className="rounded-md border border-border p-1.5 text-destructive hover:bg-muted"
                   >
                     <XCircle className="size-3.5" />
                   </button>
+                  {/* Descargar PDF del comprobante */}
                   <button
                     aria-label="PDF"
                     className="rounded-md border border-border p-1.5 text-muted-foreground hover:bg-muted"
@@ -368,13 +427,16 @@ export default function Compras() {
         </div>
       </div>
 
+      {/* ======== Modal de detalle de compra ======== */}
       <Dialog open={detalleAbierto} onOpenChange={setDetalleAbierto}>
         <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Detalle de compra #{compraDetalle?.id}</DialogTitle>
           </DialogHeader>
+          {/* Solo se pinta si hay una compra seleccionada */}
           {compraDetalle && (
             <div className="space-y-3 text-sm">
+              {/* Datos generales de la compra */}
               <div className="grid gap-2 sm:grid-cols-2">
                 <div>
                   <p className="text-xs text-muted-foreground">Fecha</p>
@@ -389,6 +451,7 @@ export default function Compras() {
                   <p className="font-medium">{compraDetalle.observaciones}</p>
                 </div>
               </div>
+              {/* Productos de la compra */}
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-primary-soft text-left text-secondary-foreground">
@@ -399,16 +462,17 @@ export default function Compras() {
                   </tr>
                 </thead>
                 <tbody>
-                  {compraDetalle.detalles.map((d, i) => (
+                  {compraDetalle.detalles.map((detalle, i) => (
                     <tr key={i} className="border-b border-border last:border-0">
-                      <td className="px-3 py-2">{d.producto}</td>
-                      <td className="px-3 py-2">{d.cantidad}</td>
-                      <td className="px-3 py-2">{formatearPesos(d.precio)}</td>
-                      <td className="px-3 py-2">{formatearPesos(d.subtotal)}</td>
+                      <td className="px-3 py-2">{detalle.producto}</td>
+                      <td className="px-3 py-2">{detalle.cantidad}</td>
+                      <td className="px-3 py-2">{formatearPesos(detalle.precio)}</td>
+                      <td className="px-3 py-2">{formatearPesos(detalle.subtotal)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {/* Total de la compra */}
               <div className="flex justify-between border-t border-border pt-3 text-base font-semibold">
                 <span>Total</span>
                 <span>{formatearPesos(compraDetalle.total)}</span>
@@ -417,6 +481,6 @@ export default function Compras() {
           )}
         </DialogContent>
       </Dialog>
-    </DashboardLayout>
+    </LayoutPanel>
   );
 }
